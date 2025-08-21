@@ -1,15 +1,9 @@
 import { createIoCContainer } from './ioc';
 import type { Users } from './services/users';
 import type { User } from './types';
+
 const ioc = createIoCContainer();
-
-window.onload = (event: Event) => {
-  const logger = ioc.resolve('logger');
-  logger.info('Page is loaded.');
-
-  const usersService = ioc.resolve('users');
-  renderUsers(usersService);
-};
+ioc.register('config', (window as any).__CONFIG__.api);
 
 const renderUsers = async (usersService: Users) => {
   const users = await usersService.getUsers();
@@ -22,4 +16,12 @@ const renderUsers = async (usersService: Users) => {
     listItemNode.innerHTML = user.name;
     listNode.appendChild(listItemNode);
   });
+};
+
+window.onload = (event: Event) => {
+  const logger = ioc.resolve('logger');
+  logger.info('Page is loaded.');
+
+  const usersService = ioc.resolve('users');
+  renderUsers(usersService);
 };
